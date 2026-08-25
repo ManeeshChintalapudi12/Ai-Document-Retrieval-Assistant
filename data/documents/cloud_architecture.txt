@@ -1,0 +1,31 @@
+Enterprise Cloud Architecture Standards
+
+Application Architecture
+
+New enterprise applications should use service-oriented or microservice
+architectures where appropriate.
+
+Backend services expose REST APIs for communication with frontend applications
+and other enterprise services.
+
+Containerization
+
+Applications may be packaged using Docker containers.
+
+Production workloads may use Kubernetes for container orchestration,
+scaling, service discovery, and deployment management.
+
+Cloud Platforms
+
+Approved cloud platforms include Microsoft Azure and Amazon Web Services.
+
+Observability
+
+Production applications must provide centralized logging, metrics,
+health checks, and application monitoring.
+
+CI/CD
+
+Application deployments should use automated CI/CD pipelines.
+
+Production deployments require successful automated tests and security checks.

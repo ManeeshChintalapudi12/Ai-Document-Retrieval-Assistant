@@ -1,0 +1,28 @@
+Enterprise Employee Handbook
+
+Remote Work Policy
+
+Employees may work remotely up to three days per week with manager approval.
+Employees must remain available during core business hours from 9:00 AM to
+4:00 PM local time.
+
+Paid Time Off
+
+Full-time employees receive 20 days of paid time off annually.
+Unused PTO may carry over up to a maximum of 5 days into the following year.
+
+Security Requirements
+
+Employees must use company-managed devices when accessing internal systems.
+Multi-factor authentication is required for all enterprise applications.
+
+Password Policy
+
+Passwords must contain at least 12 characters and should not be shared with
+other employees. Passwords must be changed immediately if compromise is
+suspected.
+
+Equipment
+
+The company provides approved laptops and necessary software for employees.
+Lost or stolen equipment must be reported to IT Security immediately.

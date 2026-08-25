@@ -2,6 +2,9 @@ from __future__ import annotations
 
 import logging
 import os
+import hashlib
+import math
+import re
 import time
 from dataclasses import asdict
 from typing import Any
@@ -18,6 +21,20 @@ from src.config import get_settings
 from src.chunking import ChunkedDocument
 
 logger = logging.getLogger(__name__)
+LOCAL_VECTOR_SIZE = 1536
+
+
+def _local_embedding(text: str) -> list[float]:
+    vector = [0.0] * LOCAL_VECTOR_SIZE
+    for token in re.findall(r"[a-z0-9]+", text.lower()):
+        digest = hashlib.sha256(token.encode("utf-8")).digest()
+        index = int.from_bytes(digest[:4], "big") % LOCAL_VECTOR_SIZE
+        vector[index] += 1.0 if digest[4] % 2 else -1.0
+
+    magnitude = math.sqrt(sum(value * value for value in vector))
+    if magnitude == 0:
+        return vector
+    return [value / magnitude for value in vector]
 
 
 def _require_openai_dependency() -> None:
@@ -55,7 +72,7 @@ def embed_chunks(
         return [
             {
                 "content": chunk.content,
-                "vector": [0.0] * 1536,
+                "vector": _local_embedding(chunk.content),
                 "payload": chunk.to_payload(),
             }
             for chunk in chunks
@@ -105,7 +122,7 @@ def embed_texts(
     vectors: list[list[float]] = []
 
     if openai_client is None:
-        return [[0.0] * 1536 for _ in texts]
+        return [_local_embedding(text) for text in texts]
 
     for start_index in range(0, len(texts), batch_size):
         batch = texts[start_index : start_index + batch_size]
@@ -135,4 +152,4 @@ def embed_query(query: str, client: Any | None = None, model: str = "text-embedd
 
 class EmbeddingProvider:
     def embed_texts(self, texts: list[str]) -> list[list[float]]:
-        return [[0.0] * 1536 for _ in texts]
+        return [_local_embedding(text) for text in texts]

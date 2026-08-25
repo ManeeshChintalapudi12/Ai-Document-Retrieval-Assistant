@@ -34,6 +34,7 @@ else:
 
 SUPPORTED_AUDIO_EXTENSIONS = {".mp3", ".wav", ".m4a", ".webm", ".flac"}
 SUPPORTED_PDF_EXTENSIONS = {".pdf"}
+SUPPORTED_TEXT_EXTENSIONS = {".txt", ".md"}
 
 
 @dataclass(slots=True)
@@ -155,6 +156,25 @@ def ingest_audio(
     ]
 
 
+def ingest_text(file_path: str, department: str, access_level: int) -> list[IngestedDocument]:
+    path = Path(file_path)
+    content = path.read_text(encoding="utf-8").strip()
+    if not content:
+        return []
+
+    return [
+        IngestedDocument(
+            content=content,
+            source=str(path),
+            page_number=None,
+            doc_type="text",
+            department=department,
+            access_level=access_level,
+            metadata={"department": department, "access_level": access_level},
+        )
+    ]
+
+
 def ingest_file(file_path: str, department: str, access_level: int) -> list[IngestedDocument]:
     path = Path(file_path)
     suffix = path.suffix.lower()
@@ -166,6 +186,9 @@ def ingest_file(file_path: str, department: str, access_level: int) -> list[Inge
 
     if suffix in SUPPORTED_AUDIO_EXTENSIONS:
         return ingest_audio(file_path, department, access_level)
+
+    if suffix in SUPPORTED_TEXT_EXTENSIONS:
+        return ingest_text(file_path, department, access_level)
 
     raise ValueError(f"Unsupported file type: {suffix}")
 

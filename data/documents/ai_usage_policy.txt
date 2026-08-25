@@ -1,0 +1,34 @@
+Enterprise Generative AI Usage Policy
+
+Approved AI Systems
+
+Employees may use company-approved generative AI systems for software
+development, document analysis, summarization, and internal productivity.
+
+Sensitive Information
+
+Employees must not send confidential customer information, passwords,
+API keys, authentication tokens, or restricted business information to
+unapproved AI services.
+
+AI-Generated Code
+
+Software engineers must review AI-generated code before merging it into
+production branches.
+
+Generated code must pass existing unit tests, integration tests,
+security scans, and code-review requirements.
+
+Retrieval-Augmented Generation
+
+Enterprise AI assistants should retrieve information only from
+authorized knowledge sources.
+
+Retrieved documents should maintain source metadata so answers can
+provide citations.
+
+AI Safety
+
+Applications using large language models should implement appropriate
+authentication, authorization, input validation, output validation,
+logging, and guardrails.

@@ -1,0 +1,32 @@
+Enterprise Information Security Policy
+
+Authentication
+
+All enterprise applications require multi-factor authentication.
+Access permissions follow the principle of least privilege.
+
+Data Classification
+
+Company information is classified as Public, Internal, Confidential,
+or Restricted.
+
+Restricted information includes customer financial information,
+authentication credentials, private customer records, and security keys.
+
+Encryption
+
+Confidential and Restricted information must be encrypted while stored
+and while transmitted across networks.
+
+API Security
+
+API credentials must never be committed to source-control repositories.
+Secrets must be stored using approved secret-management systems.
+
+Security Incidents
+
+Suspected security incidents must immediately be reported to the
+Security Operations team.
+
+Developers must rotate credentials if an API key or secret is accidentally
+exposed.

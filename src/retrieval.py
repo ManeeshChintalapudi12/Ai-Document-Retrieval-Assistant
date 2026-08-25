@@ -63,13 +63,24 @@ def retrieve_with_rbac(query: str, user_context: UserContext, top_k: int = 5) ->
     query_vector = embed_query(query)
 
     try:
-        results = client.search(
-            collection_name=settings.qdrant_collection_name,
-            query_vector=query_vector,
-            query_filter=build_rbac_filter(user_context),
-            limit=top_k,
-            with_payload=True,
-        )
+        query_filter = build_rbac_filter(user_context)
+        if hasattr(client, "query_points"):
+            response = client.query_points(
+                collection_name=settings.qdrant_collection_name,
+                query=query_vector,
+                query_filter=query_filter,
+                limit=top_k,
+                with_payload=True,
+            )
+            results = response.points
+        else:
+            results = client.search(
+                collection_name=settings.qdrant_collection_name,
+                query_vector=query_vector,
+                query_filter=query_filter,
+                limit=top_k,
+                with_payload=True,
+            )
     except Exception:
         return RetrievalResult(chunks=[], access_restricted=True)
 

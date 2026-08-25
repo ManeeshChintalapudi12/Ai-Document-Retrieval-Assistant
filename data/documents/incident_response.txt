@@ -1,0 +1,42 @@
+Enterprise Incident Response Procedure
+
+Severity Levels
+
+SEV-1:
+Critical production outage affecting most customers.
+
+SEV-2:
+Major functionality unavailable with significant customer impact.
+
+SEV-3:
+Limited functionality affected with available workarounds.
+
+SEV-4:
+Low-impact issue with minimal customer impact.
+
+SEV-1 Response
+
+The on-call engineering team must acknowledge a SEV-1 incident within
+15 minutes.
+
+The incident commander coordinates engineering, infrastructure,
+security, and business teams.
+
+Communication
+
+Status updates should be provided throughout major incidents.
+
+Resolution
+
+After service restoration, engineering teams must identify the root cause.
+
+Post-Incident Review
+
+SEV-1 and SEV-2 incidents require a post-incident review documenting:
+
+- Incident timeline
+- Root cause
+- Customer impact
+- Resolution
+- Corrective actions
+- Prevention measures
