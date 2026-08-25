@@ -58,11 +58,17 @@ a {
 .header-controls label span { display: block; padding: 7px 13px 0; border: 1px solid var(--line); border-bottom: 0; color: #72819a; font-size: 10px; }
 .header-controls select { min-width: 188px; border: 1px solid var(--line); background: var(--panel); color: var(--text); padding: 7px 13px 10px; outline: 0; font-size: 13px; }
 .icon-button { border: 1px solid var(--line); background: var(--panel); color: #84a7ff; min-height: 52px; min-width: 48px; font-size: 21px; cursor: pointer; }
+.icon-button-active { background: #1b3157; border-color: #6688ec; }
+.filter-strip { display: flex; align-items: center; gap: 9px; border: 1px solid #29426a; background: #102440; color: #c9d5e8; padding: 9px 12px; margin: -10px 0 13px; font-size: 11px; }
+.filter-strip button { margin-left: auto; border: 0; background: transparent; color: #8eacff; cursor: pointer; }
 .conversation-panel { flex: 1; min-height: 0; border: 1px solid var(--line); background: rgba(9, 23, 45, .75); padding: 12px; display: flex; flex-direction: column; }
 .conversation-scroll { flex: 1; overflow-y: auto; padding: 7px 6px 20px; display: flex; flex-direction: column; gap: 15px; }
 .empty-state { margin: auto; text-align: center; max-width: 390px; color: var(--muted); }
 .empty-state h2 { color: var(--text); font-size: 20px; margin: 16px 0 7px; }
 .empty-state p { font-size: 14px; line-height: 1.6; }
+.prompt-grid { display: grid; gap: 7px; margin-top: 20px; }
+.prompt-grid button { border: 1px solid var(--line); background: #0e1d35; color: #bdc9dc; padding: 9px 12px; text-align: left; font-size: 12px; cursor: pointer; }
+.prompt-grid button:hover { border-color: #6588e9; color: white; }
 .assistant-badge { margin: auto; width: 44px; height: 44px; display: grid; place-items: center; border: 1px solid #5578e8; color: #9ab3ff; border-radius: 10px; }
 .composer { display: flex; align-items: center; border: 1px solid #5274df; background: #0b1931; padding: 7px 8px 7px 14px; }
 .composer input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; color: var(--text); font-size: 14px; }
@@ -70,6 +76,8 @@ a {
 .send-button { width: 39px; height: 39px; border: 0; background: linear-gradient(135deg, #7192ff, #6253ed); color: white; font-size: 21px; cursor: pointer; }
 .send-button:disabled { opacity: .6; }
 .privacy-note, .error-message { text-align: center; color: #a9b4c8; font-size: 12px; margin: 13px 0 0; }
+.clear-button { align-self: center; border: 0; background: transparent; color: #8190aa; font-size: 11px; margin-top: 9px; cursor: pointer; }
+.clear-button:hover { color: #b7c8ed; }
 .error-message { color: #ff9d9d; }
 .inspector-rail { border-left: 1px solid var(--line); padding: 18px 14px; overflow-y: auto; }
 .rail-section { border: 1px solid var(--line); background: rgba(12, 26, 49, .8); padding: 14px; margin-bottom: 12px; }

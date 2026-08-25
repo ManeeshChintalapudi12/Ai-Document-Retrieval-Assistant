@@ -27,6 +27,8 @@ export function ChatWindow({ roleOptions }: ChatWindowProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isSending, setIsSending] = useState(false);
+  const [activeNav, setActiveNav] = useState("Assistant");
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   const selectedRole = useMemo(
     () => roleOptions.find((option) => option.userId === selectedUserId) ?? roleOptions[0],
@@ -76,7 +78,7 @@ export function ChatWindow({ roleOptions }: ChatWindowProps) {
         <div className="brand-mark">✦</div>
         <nav className="nav-list" aria-label="Primary navigation">
           {NAV_ITEMS.map((item, index) => (
-            <button key={item} type="button" className={`nav-item ${index === 0 ? "nav-item-active" : ""}`}>
+            <button key={item} type="button" onClick={() => setActiveNav(item)} className={`nav-item ${activeNav === item ? "nav-item-active" : ""}`}>
               <span className="nav-icon">{["▣", "▤", "▥", "♢", "▧", "◉", "⚙"][index]}</span>
               {item}
             </button>
@@ -98,9 +100,11 @@ export function ChatWindow({ roleOptions }: ChatWindowProps) {
           </div>
           <div className="header-controls">
             <RoleSelector value={selectedUserId} options={roleOptions} onChange={setSelectedUserId} />
-            <button type="button" className="icon-button" aria-label="Open filters">☷</button>
+            <button type="button" onClick={() => setFiltersOpen((current) => !current)} className={`icon-button ${filtersOpen ? "icon-button-active" : ""}`} aria-label="Open filters">☷</button>
           </div>
         </header>
+
+        {filtersOpen ? <div className="filter-strip"><span>Active collection: All Collections</span><span>Access: {selectedRole.label}</span><button type="button" onClick={() => setFiltersOpen(false)}>Close</button></div> : null}
 
         <section className="conversation-panel">
           <div className="conversation-scroll">
@@ -109,6 +113,9 @@ export function ChatWindow({ roleOptions }: ChatWindowProps) {
                 <div className="assistant-badge">✦</div>
                 <h2>Ask your enterprise knowledge base</h2>
                 <p>Search authorized company documents and receive answers with source citations.</p>
+                <div className="prompt-grid">
+                  {["What is the AI usage policy?", "Summarize the security policy", "How do I apply for leave?"] .map((prompt) => <button type="button" key={prompt} onClick={() => setDraft(prompt)}>{prompt}</button>)}
+                </div>
               </div>
             ) : null}
             {messages.map((message) => <MessageBubble key={message.id} message={message} />)}
@@ -117,19 +124,20 @@ export function ChatWindow({ roleOptions }: ChatWindowProps) {
             <input value={draft} onChange={(event) => setDraft(event.target.value)} placeholder="Ask a question or search your documents..." aria-label="Search documents" />
             <button type="submit" disabled={isSending} className="send-button" aria-label="Send question">{isSending ? "..." : "➤"}</button>
           </form>
+          {messages.length > 0 ? <button type="button" className="clear-button" onClick={() => { setMessages([]); setError(null); }}>Clear conversation</button> : null}
           {error ? <p className="error-message">{error}</p> : <p className="privacy-note">⌑ Responses are generated using authorized enterprise data only.</p>}
         </section>
       </main>
 
       <aside className="inspector-rail">
         <section className="rail-section">
-          <div className="section-heading"><h2>Source Documents</h2><button type="button">View all</button></div>
+          <div className="section-heading"><h2>Source Documents</h2><button type="button" onClick={() => setActiveNav("Documents")}>View all</button></div>
           <div className="source-list">
             {SOURCE_DOCUMENTS.map(([type, name, updated]) => <div className="source-row" key={name}><span className={`file-icon file-${type.toLowerCase()}`}>{type}</span><div><span className="source-type">Document</span><strong>{name}</strong><small>{updated}</small></div><span className="chevron">›</span></div>)}
           </div>
         </section>
         <section className="rail-section">
-          <div className="section-heading"><h2>Role &amp; Permissions</h2><button type="button">View all</button></div>
+          <div className="section-heading"><h2>Role &amp; Permissions</h2><button type="button" onClick={() => setActiveNav("Access Control")}>View all</button></div>
           <div className="permission-card"><span className="permission-icon">♢</span><div><strong>{selectedRole.label} user</strong><div className="permission-tags"><span>Documents: Read</span><span>Query: Allowed</span></div></div></div>
           <div className="permission-card"><span className="permission-icon permission-blue">⌑</span><div><strong>RBAC enforced</strong><div className="permission-tags"><span>Metadata filtered</span><span>Guardrails active</span></div></div></div>
         </section>

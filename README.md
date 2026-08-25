@@ -34,8 +34,10 @@ flowchart LR
 ## What is included
 
 - Multimodal ingestion for PDFs, tables, and audio transcripts
+- Text and Markdown ingestion for the bundled document corpus
 - Config-backed chunking with preserved metadata
 - OpenAI embedding pipeline for Qdrant insertion
+- Deterministic local embeddings when `OPENAI_API_KEY` is not configured
 - RBAC-aware retrieval using pre-search Qdrant filters
 - Guardrail checks for salary, prompt injection, and off-topic prompts
 - FastAPI `/chat` endpoint with mock JWT verification
@@ -69,6 +71,14 @@ On Windows with Docker Desktop versions that require an older Engine API, run:
 $env:DOCKER_API_VERSION = "1.52"
 docker compose up --build
 ```
+
+1. Index the bundled documents:
+
+```powershell
+docker compose exec api python -m src.ingest_documents --reset
+```
+
+The command loads `data/documents/` into the `enterprise_docs` Qdrant collection. Set `OPENAI_API_KEY` in `.env` for OpenAI embeddings; without it, the local deterministic fallback keeps the demo searchable.
 
 1. Or run the API locally:
 
