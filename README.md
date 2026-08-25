@@ -1,22 +1,34 @@
-# Enterprise RAG + RBAC
+# AI Document Retrieval Assistant
 
-Production-style starter for a multimodal enterprise RAG system with role-based access control, metadata-aware Qdrant retrieval, guardrails, FastAPI serving, and evaluation hooks.
+Production-style multimodal document retrieval assistant with role-based access control, metadata-aware Qdrant retrieval, guardrails, FastAPI serving, and evaluation hooks.
 
-![Enterprise RAG and RBAC dashboard](assets/rag-rbac-dashboard.png)
+**Author:** Maneesh Chintalapudi
+
+## Frontend
+
+The Next.js frontend provides role selection, authenticated chat, grounded answers, source references, and access-denied states.
+
+![AI Document Retrieval Assistant frontend](assets/rag-rbac-dashboard.png)
 
 ## Architecture
 
 ```mermaid
 flowchart LR
-    A[Ingestion: PDFs, tables, audio] --> B[Chunking]
-    B --> C[OpenAI Embeddings]
-    C --> D[Qdrant Vector DB]
-    E[User Context / RBAC] --> F[Metadata Filter]
-    D --> F
-    G[Guardrails] --> H[Allowed or Blocked]
-    F --> I[LLM Answer Generation]
-    H --> I
-    I --> J[RAGResponse JSON]
+    U[User] --> W[Next.js frontend]
+    W -->|Bearer mock JWT + query| A[FastAPI /chat]
+    A --> G[Guardrails]
+    A --> R[RBAC user context]
+    G -->|Allowed| F[Metadata filter]
+    R --> F
+    I[PDFs, tables, audio] --> C[Chunking]
+    C --> E[OpenAI embeddings]
+    E --> Q[Qdrant vector store]
+    Q --> F
+    F --> L[Grounded LLM answer]
+    G -->|Blocked| D[Access denied response]
+    L --> S[Sources + confidence]
+    D --> W
+    S --> W
 ```
 
 ## What is included
@@ -48,6 +60,13 @@ copy .env.example .env
 1. Start Qdrant and the API with Docker:
 
 ```bash
+docker compose up --build
+```
+
+On Windows with Docker Desktop versions that require an older Engine API, run:
+
+```powershell
+$env:DOCKER_API_VERSION = "1.52"
 docker compose up --build
 ```
 
@@ -100,3 +119,13 @@ For resume use, copy the final numbers from the generated CSV and terminal summa
 - `data/` evaluation samples
 - `reports/` generated metrics
 - `tests/` unit and integration tests
+
+## Frontend development
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Open `http://localhost:3000` after starting the API at `http://localhost:8000`.
