@@ -32,6 +32,8 @@ def _build_openai_client(client: Any | None = None) -> Any:
     _require_openai_dependency()
     settings = get_settings()
     api_key = settings.openai_api_key or os.getenv("OPENAI_API_KEY")
+    if not api_key:
+        return None
     return OpenAI(api_key=api_key)
 
 
@@ -48,6 +50,16 @@ def embed_chunks(
 ) -> list[dict[str, Any]]:
     openai_client = _build_openai_client(client)
     embedded_chunks: list[dict[str, Any]] = []
+
+    if openai_client is None:
+        return [
+            {
+                "content": chunk.content,
+                "vector": [0.0] * 1536,
+                "payload": chunk.to_payload(),
+            }
+            for chunk in chunks
+        ]
 
     for start_index in range(0, len(chunks), batch_size):
         batch = chunks[start_index : start_index + batch_size]
@@ -91,6 +103,9 @@ def embed_texts(
 ) -> list[list[float]]:
     openai_client = _build_openai_client(client)
     vectors: list[list[float]] = []
+
+    if openai_client is None:
+        return [[0.0] * 1536 for _ in texts]
 
     for start_index in range(0, len(texts), batch_size):
         batch = texts[start_index : start_index + batch_size]

@@ -62,13 +62,16 @@ def retrieve_with_rbac(query: str, user_context: UserContext, top_k: int = 5) ->
     client = get_qdrant_client()
     query_vector = embed_query(query)
 
-    results = client.search(
-        collection_name=settings.qdrant_collection_name,
-        query_vector=query_vector,
-        query_filter=build_rbac_filter(user_context),
-        limit=top_k,
-        with_payload=True,
-    )
+    try:
+        results = client.search(
+            collection_name=settings.qdrant_collection_name,
+            query_vector=query_vector,
+            query_filter=build_rbac_filter(user_context),
+            limit=top_k,
+            with_payload=True,
+        )
+    except Exception:
+        return RetrievalResult(chunks=[], access_restricted=True)
 
     chunks: list[RetrievedChunk] = []
     for item in results:
