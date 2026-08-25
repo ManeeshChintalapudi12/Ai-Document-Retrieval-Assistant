@@ -12,6 +12,15 @@ type ChatWindowProps = {
 
 const DEFAULT_ROLE = "user-hr";
 
+const NAV_ITEMS = ["Assistant", "Documents", "Collections", "Access Control", "Audit Logs", "Data Sources", "Settings"];
+
+const SOURCE_DOCUMENTS = [
+  ["PDF", "AI Usage Policy", "Updated today"],
+  ["DOC", "Employee Handbook", "Updated today"],
+  ["TXT", "Security Policy", "Updated today"],
+  ["TXT", "Incident Response", "Updated today"],
+];
+
 export function ChatWindow({ roleOptions }: ChatWindowProps) {
   const [selectedUserId, setSelectedUserId] = useState(DEFAULT_ROLE);
   const [draft, setDraft] = useState("");
@@ -62,62 +71,70 @@ export function ChatWindow({ roleOptions }: ChatWindowProps) {
   }
 
   return (
-    <div className="grid min-h-[calc(100vh-2rem)] gap-6 lg:grid-cols-[280px_1fr]">
-      <aside className="rounded-[32px] border border-white/10 bg-white/5 p-6 shadow-soft backdrop-blur">
-        <div className="space-y-2">
-          <p className="text-xs uppercase tracking-[0.28em] text-slate-400">Enterprise RAG</p>
-          <h1 className="text-2xl font-semibold text-white">RBAC Chat</h1>
-          <p className="text-sm leading-6 text-slate-300">
-            Simulate access as HR, Engineering, Finance, or Admin and inspect how guardrails and metadata filtering behave.
-          </p>
-        </div>
-
-        <div className="mt-6 space-y-4">
-          <RoleSelector value={selectedUserId} options={roleOptions} onChange={setSelectedUserId} />
-          <div className="rounded-2xl border border-white/10 bg-slate-950/30 p-4 text-sm text-slate-300">
-            <div className="text-xs uppercase tracking-[0.2em] text-slate-400">Active role</div>
-            <div className="mt-2 font-medium text-white">{selectedRole.label}</div>
-            <div className="text-xs text-slate-400">{selectedRole.department}</div>
-          </div>
+    <div className="app-shell">
+      <aside className="sidebar">
+        <div className="brand-mark">✦</div>
+        <nav className="nav-list" aria-label="Primary navigation">
+          {NAV_ITEMS.map((item, index) => (
+            <button key={item} type="button" className={`nav-item ${index === 0 ? "nav-item-active" : ""}`}>
+              <span className="nav-icon">{["▣", "▤", "▥", "♢", "▧", "◉", "⚙"][index]}</span>
+              {item}
+            </button>
+          ))}
+        </nav>
+        <div className="sidebar-status">
+          <span className="status-dot" />
+          <div><span className="status-label">System Status</span><strong>Operational</strong></div>
+          <div className="secure-row">⌑ <span>All systems secure</span></div>
         </div>
       </aside>
 
-      <section className="flex flex-col rounded-[32px] border border-white/10 bg-slate-950/40 shadow-soft backdrop-blur">
-        <div className="border-b border-white/10 px-6 py-4">
-          <p className="text-sm uppercase tracking-[0.28em] text-slate-400">Conversation</p>
-        </div>
-
-        <div className="flex-1 space-y-4 overflow-y-auto px-6 py-6">
-          {messages.length === 0 ? (
-            <div className="rounded-3xl border border-dashed border-white/10 bg-white/5 p-8 text-sm leading-6 text-slate-300">
-              Start with a policy question, a compensation query, or a prompt-injection attempt to see RBAC and guardrails in action.
-            </div>
-          ) : null}
-
-          {messages.map((message) => (
-            <MessageBubble key={message.id} message={message} />
-          ))}
-        </div>
-
-        <form onSubmit={handleSubmit} className="border-t border-white/10 p-4">
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <input
-              value={draft}
-              onChange={(event) => setDraft(event.target.value)}
-              placeholder="Ask about a company document..."
-              className="min-h-[52px] flex-1 rounded-2xl border border-white/10 bg-white/5 px-4 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-accent-500 focus:ring-2 focus:ring-accent-500/25"
-            />
-            <button
-              type="submit"
-              disabled={isSending}
-              className="rounded-2xl bg-accent-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-accent-500 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {isSending ? "Sending..." : "Send"}
-            </button>
+      <main className="workspace">
+        <header className="workspace-header">
+          <div>
+            <p className="eyebrow">Secure enterprise search</p>
+            <h1>Knowledge Assistant</h1>
+            <p>Secure RAG-powered search and answers from your enterprise data</p>
           </div>
-          {error ? <p className="mt-3 text-sm text-warning-100">{error}</p> : null}
-        </form>
-      </section>
+          <div className="header-controls">
+            <RoleSelector value={selectedUserId} options={roleOptions} onChange={setSelectedUserId} />
+            <button type="button" className="icon-button" aria-label="Open filters">☷</button>
+          </div>
+        </header>
+
+        <section className="conversation-panel">
+          <div className="conversation-scroll">
+            {messages.length === 0 ? (
+              <div className="empty-state">
+                <div className="assistant-badge">✦</div>
+                <h2>Ask your enterprise knowledge base</h2>
+                <p>Search authorized company documents and receive answers with source citations.</p>
+              </div>
+            ) : null}
+            {messages.map((message) => <MessageBubble key={message.id} message={message} />)}
+          </div>
+          <form onSubmit={handleSubmit} className="composer">
+            <input value={draft} onChange={(event) => setDraft(event.target.value)} placeholder="Ask a question or search your documents..." aria-label="Search documents" />
+            <button type="submit" disabled={isSending} className="send-button" aria-label="Send question">{isSending ? "..." : "➤"}</button>
+          </form>
+          {error ? <p className="error-message">{error}</p> : <p className="privacy-note">⌑ Responses are generated using authorized enterprise data only.</p>}
+        </section>
+      </main>
+
+      <aside className="inspector-rail">
+        <section className="rail-section">
+          <div className="section-heading"><h2>Source Documents</h2><button type="button">View all</button></div>
+          <div className="source-list">
+            {SOURCE_DOCUMENTS.map(([type, name, updated]) => <div className="source-row" key={name}><span className={`file-icon file-${type.toLowerCase()}`}>{type}</span><div><span className="source-type">Document</span><strong>{name}</strong><small>{updated}</small></div><span className="chevron">›</span></div>)}
+          </div>
+        </section>
+        <section className="rail-section">
+          <div className="section-heading"><h2>Role &amp; Permissions</h2><button type="button">View all</button></div>
+          <div className="permission-card"><span className="permission-icon">♢</span><div><strong>{selectedRole.label} user</strong><div className="permission-tags"><span>Documents: Read</span><span>Query: Allowed</span></div></div></div>
+          <div className="permission-card"><span className="permission-icon permission-blue">⌑</span><div><strong>RBAC enforced</strong><div className="permission-tags"><span>Metadata filtered</span><span>Guardrails active</span></div></div></div>
+        </section>
+        <section className="rail-section vector-section"><div className="section-heading"><h2>Vector Database</h2><span className="live-label"><span className="status-dot" /> Live</span></div><div className="vector-visual"><span className="cluster cluster-one" /><span className="cluster cluster-two" /><span className="cluster cluster-three" /></div><p className="vector-caption">⌑ Secure embeddings store</p></section>
+      </aside>
     </div>
   );
 }
