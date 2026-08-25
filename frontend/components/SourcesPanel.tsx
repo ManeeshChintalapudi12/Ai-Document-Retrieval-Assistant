@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { basename } from "path";
 import type { RAGSource } from "@/lib/types";
 
 type SourcesPanelProps = {
@@ -28,7 +29,7 @@ export function SourcesPanel({ sources }: SourcesPanelProps) {
         <ul className="mt-3 space-y-2 text-sm text-slate-200">
           {sources.map((source, index) => (
             <li key={`${source.doc_name}-${source.page}-${index}`} className="rounded-xl border border-white/5 bg-slate-950/40 px-3 py-2">
-              <div className="font-medium text-white">{source.doc_name}</div>
+              <div className="font-medium text-white">{basename(source.doc_name)}</div>
               <div className="text-xs text-slate-400">Page {source.page ?? "N/A"}</div>
             </li>
           ))}

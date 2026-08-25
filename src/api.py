@@ -78,12 +78,18 @@ def generate_answer(query: str, retrieval_result: RetrievalResult, client: Any |
         return "No grounded sources were available for this answer.", 0.0
 
     openai_client = _build_openai_client(client)
+
+    if openai_client is None:
+        best_chunk = retrieval_result.chunks[0]
+        return (
+            "OpenAI is not configured, so this is the most relevant grounded excerpt "
+            f"from {best_chunk.source}:\n\n{best_chunk.content}",
+            min(1.0, 0.5 + 0.1 * len(retrieval_result.chunks)),
+        )
+
     context = "\n\n".join(
         f"Source: {chunk.source}\nPage: {chunk.page_number}\nContent: {chunk.content}" for chunk in retrieval_result.chunks
     )
-
-    if openai_client is None:
-        return f"Answer based on retrieved context:\n{context}", min(1.0, 0.5 + 0.1 * len(retrieval_result.chunks))
 
     response = openai_client.chat.completions.create(
         model="gpt-4o-mini",

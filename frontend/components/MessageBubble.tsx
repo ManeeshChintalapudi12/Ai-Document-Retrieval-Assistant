@@ -31,7 +31,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
     <div className={`max-w-[86%] rounded-3xl rounded-tl-md border px-4 py-4 shadow-soft ${isDenied ? "border-warning-600/50 bg-warning-50 text-warning-700" : "border-white/10 bg-white/5 text-slate-100"}`}>
       <div className="flex items-start gap-2 text-sm leading-6">
         {isDenied ? <LockIcon /> : null}
-        <p>{message.content}</p>
+        <p className="whitespace-pre-wrap">{message.content}</p>
       </div>
       <div className="mt-3 text-xs uppercase tracking-[0.18em] text-slate-400">
         Confidence {(message.confidenceScore ?? 0).toFixed(2)}
