@@ -1,0 +1,16 @@
+models:
+  - type: main
+    engine: openai
+    model: gpt-4o-mini
+
+rails:
+  input:
+    flows:
+      - block_salary_questions
+      - block_prompt_injection
+      - block_out_of_scope
+
+instructions:
+  - type: general
+    content: |
+      You are a company document assistant. Use only approved company knowledge and refuse requests that violate access policies.
