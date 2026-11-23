@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass
 from typing import Any
 
@@ -9,6 +10,8 @@ from qdrant_client.http import models as rest
 from src.config import get_settings
 from src.embeddings import embed_query
 from src.schemas import UserContext
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass(slots=True)
@@ -24,6 +27,10 @@ class RetrievedChunk:
 class RetrievalResult:
     chunks: list[RetrievedChunk]
     access_restricted: bool = False
+    # True only when the vector-store search itself failed (e.g. Qdrant is
+    # unreachable). This is distinct from access_restricted: an empty result
+    # from a successful search means no documents matched, not an outage.
+    retrieval_failed: bool = False
 
 
 def get_qdrant_client() -> QdrantClient:
@@ -82,7 +89,10 @@ def retrieve_with_rbac(query: str, user_context: UserContext, top_k: int = 5) ->
                 with_payload=True,
             )
     except Exception:
-        return RetrievalResult(chunks=[], access_restricted=True)
+        # A failed search is not an RBAC denial: flag it separately so callers
+        # can report the outage instead of telling the user "access denied".
+        logger.exception("Document retrieval failed for query %r", query)
+        return RetrievalResult(chunks=[], access_restricted=True, retrieval_failed=True)
 
     chunks: list[RetrievedChunk] = []
     for item in results:

@@ -124,6 +124,11 @@ def chat(payload: ChatRequest, http_request: Request) -> RAGResponse:
         )
 
     retrieval_result = retrieve_with_rbac(payload.query, user_context)
+    if retrieval_result.retrieval_failed:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Document retrieval is temporarily unavailable. Please try again later.",
+        )
     if retrieval_result.access_restricted or not retrieval_result.chunks:
         return RAGResponse(
             answer="Access denied: no documents matched your RBAC clearance.",

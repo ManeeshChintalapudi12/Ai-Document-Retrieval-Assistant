@@ -52,6 +52,14 @@ def run_pipeline_for_sample(sample: dict[str, Any]) -> dict[str, Any]:
         }
 
     retrieval_result = retrieve_with_rbac(sample["question"], user_context)
+    if retrieval_result.retrieval_failed:
+        return {
+            "question": sample["question"],
+            "answer": "Document retrieval failed; the vector store was unavailable.",
+            "ground_truth": sample["ground_truth"],
+            "contexts": [],
+            "access_denied": False,
+        }
     if retrieval_result.access_restricted:
         return {
             "question": sample["question"],
